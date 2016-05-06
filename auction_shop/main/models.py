@@ -5,25 +5,22 @@ from django.contrib.auth.models import User
 
 
 class Miasto(models.Model):
-    wartosc = models.CharField(max_length=48)
+    wartosc = models.CharField(max_length=48, unique=True)
+
+    def __str__(self):
+        return self.wartosc
 
 
 class Adres(models.Model):
     ulica = models.CharField(max_length=32)
     kod_pocztowy = models.CharField(max_length=16)
 
+    def __str__(self):
+        return self.kod_pocztowy + ', ' + self.ulica
+
 
 class TypUzytkownika(models.Model):
-
-    OSOBA = 'O'
-    FIRMA = 'F'
-
-    TYPY_UZYTKOWNIKA = (
-        (OSOBA, 'Osoba'),
-        (FIRMA, 'Firma'),
-    )
-
-    wartosc = models.CharField(max_length=1, choices=TYPY_UZYTKOWNIKA, default=OSOBA)
+    wartosc = models.CharField(max_length=32, unique=True)
 
 
 class ProfilUzytkownika(models.Model):
@@ -39,31 +36,11 @@ class ProfilUzytkownika(models.Model):
 
 
 class TypAukcji(models.Model):
-
-    KUPNO_SPRZEDAZ = 'nor'
-    ANGIELSKA = 'ang'
-    HOLENDERSKA = 'hol'
-    VICKEREYA = 'vic'
-
-    TYPY_AUKCJI = (
-        (KUPNO_SPRZEDAZ, 'Kupno/Sprzedaz'),
-        (ANGIELSKA, 'Angielska'),
-        (HOLENDERSKA, 'Holenderska'),
-        (VICKEREYA, 'Vickerey\'a')
-    )
-    nazwa = models.CharField(max_length=3, choices=TYPY_AUKCJI, default=KUPNO_SPRZEDAZ)
+    nazwa = models.CharField(max_length=32, unique=True)
 
 
 class StanNowosci(models.Model):
-
-    NOWY = 'n'
-    UZYWANY = 'u'
-
-    STANY_NOWOSCI = (
-        (NOWY, 'Nowy'),
-        (UZYWANY, 'Uzywany')
-    )
-    wartosc = models.CharField(max_length=1, choices=STANY_NOWOSCI, default=NOWY)
+    wartosc = models.CharField(max_length=16, unique=True)
 
 
 class Cecha(models.Model):
@@ -72,8 +49,11 @@ class Cecha(models.Model):
 
 class Gatunek(models.Model):
     nazwa = models.CharField(max_length=32, unique=True)
-    cechy = models.ManyToManyField(Cecha)
-    gatunek_rodzic = models.ForeignKey('Gatunek')
+    cechy = models.ManyToManyField(Cecha, blank=True)
+    gatunek_rodzic = models.ForeignKey('Gatunek', null=True, blank=True)
+
+    def __str__(self):
+        return self.nazwa
 
 
 class Przedmiot(models.Model):
