@@ -22,6 +22,9 @@ class Adres(models.Model):
 class TypUzytkownika(models.Model):
     wartosc = models.CharField(max_length=32, unique=True)
 
+    def __str__(self):
+        return self.wartosc
+
 
 class ProfilUzytkownika(models.Model):
     uzytkownik = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -34,17 +37,29 @@ class ProfilUzytkownika(models.Model):
     numer_domu = models.CharField(max_length=8)
     #opiniujacy = models.ManyToManyField(User, through='Opinia', through_fields=('wystawiajacy', 'otrzymujacy'))
 
+    def __str__(self):
+        return self.uzytkownik.username
+
 
 class TypAukcji(models.Model):
     nazwa = models.CharField(max_length=32, unique=True)
+
+    def __str__(self):
+        return self.nazwa
 
 
 class StanNowosci(models.Model):
     wartosc = models.CharField(max_length=16, unique=True)
 
+    def __str__(self):
+        return self.wartosc
+
 
 class Cecha(models.Model):
     nazwa = models.CharField(max_length=32, unique=True)
+
+    def __str__(self):
+        return self.nazwa
 
 
 class Gatunek(models.Model):
@@ -64,6 +79,9 @@ class Przedmiot(models.Model):
     stan_nowosci = models.ForeignKey(StanNowosci)
     cechy = models.ManyToManyField(Cecha, through='WartoscCechyPrzedmiotu', through_fields=('przedmiot', 'cecha'),)
 
+    def __str__(self):
+        return self.nazwa
+
 
 class Aukcja(models.Model):
     przedmiot = models.ForeignKey(Przedmiot)
@@ -75,6 +93,9 @@ class Aukcja(models.Model):
     czy_zakonczona = models.BooleanField()
     priorytet = models.IntegerField(default=0)
     typ_aukcji = models.ForeignKey(TypAukcji)
+
+    def __str__(self):
+        return str(self.id)
 
 
 class OfertaAukcji(models.Model):

@@ -17,12 +17,16 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import url, include
 from main.views import IndexView, login_user, logout_user
+from api.routers import router
 
 
 urlpatterns = [
-    url(r'^$', IndexView.as_view(template_name="index.html"), name='index'),
     url(r'^admin/', admin.site.urls, name='admin'),
     url(r'^login/$', login_user, name='login'),
     url(r'^logout/$', logout_user, name='logout'),
+    url(r'^api/', include(router.urls)),
+    url(r'^api/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^', IndexView.as_view(template_name="index.html"), name='index'),
+
 ]
 

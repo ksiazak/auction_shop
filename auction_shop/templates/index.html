@@ -6,8 +6,12 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="/"><span>&nbsp;&nbsp;&nbsp;</span>Auction Shop</a>
         </div>
+
         {% if request.user.is_authenticated %}
         <ul class="nav navbar-top-links navbar-right">
+            <li>
+                <a href="admin/"><i class="fa fa-key fa-fw">&nbsp;</i>Admin panel</a>
+            </li>
             <li>
                 <a class="white-on-blue">Logged in as <strong>{{ request.user.username }}.</strong></a>
             </li>
@@ -25,36 +29,34 @@
         <div class="navbar-default sidebar" role="navigation">
             <div class="sidebar-nav navbar-collapse">
                 <ul class="nav" id="side-menu">
+                    {% for category, value in categories.items %}
                     <li>
-                        <a href="#"><i class="fa fa-wrench fa-fw">&nbsp;</i>Development<span class="fa arrow"></span></a>
+                        <a href="#"><i class="fa fa-angle-double-down fa-fw">&nbsp;</i><span onclick="window.location.replace('/?przedmiot__gatunek__nazwa={{ category }}')">{{ category }}</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
+                            {% for subcategory, subvalue in value.items %}
                             <li>
-                                <a href="https://11883.s.time4vps.eu:8085/klaster/janusz/wikis/home">
-                                    &nbsp;Documentation
+                                <a href="/?przedmiot__gatunek__nazwa={{ subcategory }}"><i class="fa fa-angle-double-down fa-fw">&nbsp;</i>{{ subcategory }}
+                                    <span class="fa arrow"></span>
                                 </a>
                                 <ul class="nav nav-third-level">
+                                    {% for subsubvalue in subvalue %}
                                     <li>
-                                        <a href="https://11883.s.time4vps.eu:8085/klaster/janusz/wikis/home">
-                                            &nbsp;Documentation
+                                        <a href="/?przedmiot__gatunek__nazwa={{ subsubvalue }}"><i class="fa fa-angle-double-right fa-fw">&nbsp;</i>{{ subsubvalue }}
                                         </a>
                                     </li>
+                                    {% endfor %}
                                 </ul>
                             </li>
+                            {% endfor %}
                         </ul>
                     </li>
-                    {% if request.user.is_authenticated %}
-                    <li>
-                        <a href="admin/"><i class="fa fa-key fa-fw">&nbsp;</i>Admin panel</a>
-                    </li>
-                    {% endif %}
+                    {% endfor %}
                 </ul>
             </div>
         </div>
     </nav>
-    {% verbatim %}
     <div id="page-wrapper" ng-app="main">
-        <main-page></main-page>
+        <main-page path="{{current_path}}"></main-page>
     </div>
-    {% endverbatim %}
 </div>
 {% endblock %}

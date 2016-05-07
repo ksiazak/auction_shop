@@ -11,4 +11,8 @@
                           atomicNotifyProvider.setDefaultDelay(5000);
                           atomicNotifyProvider.useIconOnNotification(true);
                       }])
+                      .config(function($interpolateProvider) {
+                          $interpolateProvider.startSymbol('{$');
+                          $interpolateProvider.endSymbol('$}');
+                      });
 })();
