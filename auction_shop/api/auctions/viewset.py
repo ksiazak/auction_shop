@@ -11,7 +11,7 @@ class AuctionFilter(filters.FilterSet):
 
     class Meta:
         model = Aukcja
-        fields = ['id', 'priorytet', 'przedmiot__nazwa', 'przedmiot__gatunek']
+        fields = ['id', 'priorytet', 'przedmiot__nazwa', 'przedmiot__gatunek__nazwa']
         # fields = ['id', 'priorytet', 'min_price', 'max_price', 'przedmiot__nazwa', 'przedmiot__gatunek__nazwa']
 
 

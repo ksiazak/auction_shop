@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from main.models import Aukcja, ProfilUzytkownika
+from main.models import Aukcja, ProfilUzytkownika, WartoscCechyPrzedmiotu
+from collections import OrderedDict
 
 
 class AukcjaSerializer(serializers.ModelSerializer):
@@ -25,7 +26,7 @@ class AukcjaSerializer(serializers.ModelSerializer):
                   'entries_count',
                   'if_finished',
                   'priority',
-                  'type'
+                  'type',
                   )
 
     def get_item(self, obj):
@@ -33,13 +34,15 @@ class AukcjaSerializer(serializers.ModelSerializer):
             'name': obj.przedmiot.nazwa,
             'description': obj.przedmiot.opis,
             'state': obj.przedmiot.stan_nowosci.wartosc,
-            'category': obj.przedmiot.gatunek.nazwa,
+            'categories': self.get_categories(obj),
+
 
         }
         #przedmiot['categories'] = self.get_categories(obj)
         return item
 
-    def get_seller(self, obj):
+    @staticmethod
+    def get_seller(obj):
         try:
             profile = ProfilUzytkownika.objects.get(uzytkownik=obj.sprzedawca)
             seller = {
@@ -58,7 +61,8 @@ class AukcjaSerializer(serializers.ModelSerializer):
             }
         return seller
 
-    def get_finish_date(self, obj):
+    @staticmethod
+    def get_finish_date(obj):
         return obj.data_rozpoczecia + obj.czas_trwania
 
     def get_type(self, obj):
@@ -81,11 +85,29 @@ class AukcjaSerializer(serializers.ModelSerializer):
         else:
             return 'default'
 
+    @staticmethod
+    def get_categories(obj):
+        categories = OrderedDict()
+        current_category = obj.przedmiot.gatunek
+        while True:
+            categories[current_category.nazwa] = {}
+            features_from_category = current_category.cechy.all()
+            for feature in features_from_category:
+                try:
+                    item_feature = WartoscCechyPrzedmiotu.objects.get(przedmiot=obj.przedmiot, cecha=feature)
+                    categories[current_category.nazwa][feature.nazwa] = item_feature.wartosc
+                except Exception:
+                    categories[current_category.nazwa][feature.nazwa] = ""
+            if current_category.gatunek_rodzic:
+                current_category = current_category.gatunek_rodzic
+            else:
+                return categories
+
     # @staticmethod
-    # def get_categories(obj):
-    #     pass
-        # categories = {}
-        # current_category = obj.gatunek
-        # while current_category.gatunek_rodzic:
-        #     categories[current_category] = obj.
+    # def get_features(obj):
+
+
+
+
+
 

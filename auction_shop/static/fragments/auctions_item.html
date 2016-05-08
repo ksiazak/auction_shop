@@ -10,15 +10,21 @@
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-xs-3">
-                                <i class="fa fa-align-justify fa-5x"></i>
+                                <i class="fa fa-arrows-alt fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div class="huge">Opis</div>
+                                <div class="huge">Dane</div>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer" style="background: white;">
-                        {{ auctionsItemCtrl.auction.item.description }}
+                        <div ng-repeat="(category, features) in auctionsItemCtrl.item.categories">
+                            <strong>{{ category }}</strong>:
+                            <div ng-repeat="(feature, value) in features">
+                            {{ feature }}: {{ value }}<br>
+                            </div>
+                            <hr>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -27,10 +33,10 @@
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-xs-3">
-                                <i class="fa fa-arrows-alt fa-5x"></i>
+                                <i class="fa fa-align-justify fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div class="huge">Dane</div>
+                                <div class="huge">Opis</div>
                             </div>
                         </div>
                     </div>
