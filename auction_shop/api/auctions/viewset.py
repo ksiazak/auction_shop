@@ -6,12 +6,13 @@ import django_filters
 
 
 class AuctionFilter(filters.FilterSet):
-    min_price = django_filters.NumberFilter(name="priorytet", lookup_type='gte')
-    max_price = django_filters.NumberFilter(name="priorytet", lookup_type='lte')
+    # min_price = django_filters.NumberFilter(name="priorytet", lookup_type='gte')
+    # max_price = django_filters.NumberFilter(name="priorytet", lookup_type='lte')
 
     class Meta:
         model = Aukcja
-        fields = ['id', 'priorytet', 'min_price', 'max_price', 'przedmiot__nazwa', 'przedmiot__gatunek__nazwa']
+        fields = ['id', 'priorytet', 'przedmiot__nazwa', 'przedmiot__gatunek']
+        # fields = ['id', 'priorytet', 'min_price', 'max_price', 'przedmiot__nazwa', 'przedmiot__gatunek__nazwa']
 
 
 class AukcjaViewSet(viewsets.ModelViewSet):

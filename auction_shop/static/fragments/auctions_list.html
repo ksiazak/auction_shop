@@ -14,16 +14,16 @@
         <tbody>
             <tr class="row clickable cursor-pointer" ng-repeat-start="auction in auctionsListCtrl.auctions"
                 ng-click="auction.show_details=!auction.show_details">
-                <td class="col-md-1"><button class="btn btn-{{ auction.kolor }}">{{ auction.kolor }}{{ auction.typ_aukcji_nazwa }}</button></td>
-                <td class="col-md-3">{{ auction.przedmiot_nazwa }}</td>
-                <td class="col-md-2">{{ auction.stan_nowosci }}</td>
-                <td class="col-md-2">{{ auction.cena_minimalna | currency }}</td>
-                <td class="col-md-2">{{ auction.data_rozpoczecia | date:'yyyy-MM-dd HH:mm' }}</td>
-                <td class="col-md-2">{{ auction.sprzedajacy }}</td>
+                <td class="col-md-1"><button class="btn btn-{{ auction.type.color }}">{{ auction.type.name }}</button></td>
+                <td class="col-md-3">{{ auction.item.name }}</td>
+                <td class="col-md-2">{{ auction.item.state }}</td>
+                <td class="col-md-2">{{ auction.price | currency }}</td>
+                <td class="col-md-2">{{ auction.finish_date | date:'yyyy-MM-dd HH:mm' }}</td>
+                <td class="col-md-2">{{ auction.seller.username }}</td>
             </tr>
             <tr ng-repeat-end="" ng-if="auction.show_details">
                 <td colspan="20" class="col-md-12 highlight">
-                    <auctions-item node="auction"></auctions-item>
+                    <auctions-item auction="auction"></auctions-item>
                 </td>
             </tr>
         </tbody>

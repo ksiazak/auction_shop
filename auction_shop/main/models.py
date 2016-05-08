@@ -95,7 +95,7 @@ class Aukcja(models.Model):
     typ_aukcji = models.ForeignKey(TypAukcji)
 
     def __str__(self):
-        return str(self.id)
+        return self.przedmiot.nazwa
 
 
 class OfertaAukcji(models.Model):

@@ -26,6 +26,7 @@
 
         var self = this;
         self.auction = $scope.auction;
+        console.log(self.auction.item.description);
 
     }]);
 })();
