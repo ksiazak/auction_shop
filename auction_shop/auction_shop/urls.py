@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import url, include
-from main.views import IndexView, login_user, logout_user
+from main.views import IndexView, BuyItemView, login_user, logout_user
 from api.routers import router
 
 
@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^logout/$', logout_user, name='logout'),
     url(r'^api/', include(router.urls)),
     url(r'^api/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^buy_item/$', BuyItemView.as_view(), name='buy_item'),
     url(r'^', IndexView.as_view(template_name="index.html"), name='index'),
 
 ]

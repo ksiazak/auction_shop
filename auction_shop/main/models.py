@@ -75,7 +75,7 @@ class Przedmiot(models.Model):
     nazwa = models.CharField(max_length=32)
     gatunek = models.ForeignKey(Gatunek)
     opis = models.CharField(max_length=1000, null=True, blank=True)
-    zdjecie = models.ImageField()
+    zdjecie = models.ImageField(upload_to='static/images/')
     stan_nowosci = models.ForeignKey(StanNowosci)
     cechy = models.ManyToManyField(Cecha, through='WartoscCechyPrzedmiotu', through_fields=('przedmiot', 'cecha'),)
 
@@ -85,7 +85,8 @@ class Przedmiot(models.Model):
 
 class Aukcja(models.Model):
     przedmiot = models.ForeignKey(Przedmiot)
-    sprzedawca = models.ForeignKey(User)
+    sprzedawca = models.ForeignKey(User, related_name='sprzedawca')
+    kupujacy = models.ForeignKey(User, default=None, null=True, blank=True, related_name='kupujacy')
     cena_minimalna = models.DecimalField(max_digits=10, decimal_places=2)
     data_rozpoczecia = models.DateTimeField(auto_now_add=True, blank=True)
     czas_trwania = models.DurationField()

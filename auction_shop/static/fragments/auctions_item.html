@@ -53,23 +53,24 @@
                                 <i class="fa fa-photo fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div class="huge">Zdjecia</div>
+                                <div class="huge">Zdjęcia</div>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer" style="background: white;">
-                        {{ auctionsItemCtrl.auction.item.description }}
+                        <ng-gallery images="auctionsItemCtrl.images"></ng-gallery>
                     </div>
                 </div>
             </div>
         </div>
     </uib-tab>
-    <uib-tab index="1">
+    <uib-tab index="1" ng-hide="auctionsItemCtrl.auction.if_finished">
         <uib-tab-heading>
-            <i class="fa fa-bar-chart-o "></i> Dummy
+            <i class="fa fa-gavel  "></i> {{ auctionsItemCtrl.auction.type.action }}
         </uib-tab-heading>
-        <div class="row">
-            dummy
-        </div>
+        <br>
+        <auction-action-buy auction="auctionsItemCtrl.auction"
+                            ng-show="auctionsItemCtrl.auction.type.name == 'Kup teraz!'">
+        </auction-action-buy>
     </uib-tab>
 </uib-tabset>

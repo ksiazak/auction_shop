@@ -35,10 +35,10 @@ class AukcjaSerializer(serializers.ModelSerializer):
             'description': obj.przedmiot.opis,
             'state': obj.przedmiot.stan_nowosci.wartosc,
             'categories': self.get_categories(obj),
+            'image_url': obj.przedmiot.zdjecie.url
 
 
         }
-        #przedmiot['categories'] = self.get_categories(obj)
         return item
 
     @staticmethod
@@ -66,24 +66,26 @@ class AukcjaSerializer(serializers.ModelSerializer):
         return obj.data_rozpoczecia + obj.czas_trwania
 
     def get_type(self, obj):
+        color, action = self.get_type_info(obj)
         type = {
             'name': obj.typ_aukcji.nazwa,
-            'color': self.get_color(obj)
+            'color': color,
+            'action': action
         }
         return type
 
     @staticmethod
-    def get_color(obj):
+    def get_type_info(obj):
         if obj.typ_aukcji.nazwa == 'Kup teraz!':
-            return 'primary'
+            return 'primary', 'Kup teraz!'
         elif obj.typ_aukcji.nazwa == 'Holenderska':
-            return 'warning'
+            return 'warning', 'Licytuj'
         elif obj.typ_aukcji.nazwa == 'Angielska':
-            return 'success'
+            return 'success', 'Licytuj'
         elif obj.typ_aukcji.nazwa == 'Vickerey\'a':
-            return 'danger'
+            return 'danger', 'Licytuj'
         else:
-            return 'default'
+            return 'default', 'Kup'
 
     @staticmethod
     def get_categories(obj):

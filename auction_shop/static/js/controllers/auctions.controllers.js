@@ -8,6 +8,7 @@
         function($scope, $location, apiService, notificationService) {
 
         var self = this;
+        self.isLoading = true;
         self.auctions = [];
         self.filterUrl = $scope.path
 
@@ -19,7 +20,7 @@
             self.auctions = response.data.results;
             self.bigTotalItems = response.data.count;
             self.currentPage = response.data.next;
-            console.log(response);
+            self.isLoading = false;
         });
 
 //        $scope.$watch('auctionsListCtrl.bigCurrentPage', function(){
@@ -43,6 +44,58 @@
         var self = this;
         self.auction = $scope.auction;
         self.item = self.auction.item;
+        self.images = [
+            {thumb: self.item.image_url, img: self.item.image_url, description: self.item.name},
+        ];
+
+    }]);
+
+    angular.module('main')
+    .controller('auctionActionBuyCtrl', ['$scope', '$http',
+        function($scope, $http) {
+
+        var self = this;
+        self.auction = $scope.auction;
+
+        self.buyItem = function(){
+            swal({
+                title: self.auction.item.name,
+                text: "Are you sure that you want to buy this item?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+            function(isConfirm){
+                if (isConfirm) {
+                    $http({
+                        url: 'buy_item/',
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: {
+                            'auction_id': self.auction.id
+                        }
+                    })
+                    .then(function(response) {
+                        self.auction.if_finished = true;
+                        self.auction.show_details = false;
+                        swal(self.auction.item.name, "Item has been bought.", "success");
+                    },
+                    function(response) {
+                        swal(self.auction.item.name, "There were problems.", "error");
+                    });
+                } else {
+                    swal(self.auction.item.name, "Cancelled.", "error");
+                }
+            });
+
+        }
+
 
     }]);
 })();

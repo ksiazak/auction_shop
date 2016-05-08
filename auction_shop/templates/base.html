@@ -20,6 +20,7 @@
     <link href="/static/css/loading_bar.css" rel="stylesheet" type="text/css">
     <link href="/static/css/sweetalert.css" rel="stylesheet" type="text/css">
     <link href="/static/css/angular-atomic-notify.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/ng-gallery.css" rel="stylesheet" type="text/css">
     <link href="/static/css/style.css" rel="stylesheet" type="text/css">
 
     <!-- END OF CSS FILES -->
@@ -39,6 +40,7 @@
     <script src="/static/js/loading_bar.js"></script>
     <script src="/static/js/sweetalert.min.js"></script>
     <script src="/static/js/angular-atomic-notify.js"></script>
+    <script src="/static/js/ng-gallery.js"></script>
     <!-- END OF JS FILES -->
 
     <!-- ANGULAR JS-->
@@ -64,6 +66,7 @@
     <!-- END OF DIRECTIVES -->
 </head>
 <body>
+    {% csrf_token %}
     {% block content %}{% endblock %}
 </body>
 </html>

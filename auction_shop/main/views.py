@@ -1,15 +1,17 @@
+import json
+
 from django.shortcuts import render
-from django.shortcuts import render_to_response, redirect, HttpResponseRedirect
+from django.shortcuts import render_to_response, redirect, HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.template import RequestContext
-from django.views.generic import TemplateView
-from .models import Gatunek
+from django.views.generic import TemplateView, View
+from .models import Gatunek, Aukcja
 
 
 class IndexView(TemplateView):
 
     def get(self, request):
-        # import pdb; pdb.set_trace()
         context = super(TemplateView, self).get_context_data()
         context['current_path'] = self.get_current_path(request)
         context['categories'] = self.get_categories()
@@ -26,6 +28,19 @@ class IndexView(TemplateView):
             for subcategory in subcategories:
                 categories[category][subcategory] = Gatunek.objects.filter(gatunek_rodzic=subcategory)
         return categories
+
+
+class BuyItemView(View):
+    template_url = 'buy_item/'
+
+    def post(self, request):
+        data = json.loads(request.body.decode('utf-8'))
+        auction = Aukcja.objects.get(id=data['auction_id'])
+        user = User.objects.get(username=request.user.username)
+        auction.kupujacy = user
+        auction.czy_zakonczona = True
+        auction.save()
+        return HttpResponse('ok')
 
 
 def login_user(request):

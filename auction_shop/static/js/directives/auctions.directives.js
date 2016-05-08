@@ -28,4 +28,17 @@
         };
     });
 
+    angular.module('main')
+    .directive('auctionActionBuy', function() {
+        return {
+            restrict: 'EA',
+            templateUrl: '/static/fragments/auction_action_buy.html',
+            scope: {
+                auction: '='
+            },
+            controller: 'auctionActionBuyCtrl',
+            controllerAs: 'auctionActionBuyCtrl'
+        };
+    });
+
 })();
