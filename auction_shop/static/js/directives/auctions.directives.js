@@ -41,4 +41,17 @@
         };
     });
 
+    angular.module('main')
+    .directive('newAuction', function() {
+        return {
+            restrict: 'EA',
+            templateUrl: '/static/fragments/new_auction.html',
+            scope: {
+                auction: '='
+            },
+            controller: 'newAuctionCtrl',
+            controllerAs: 'newAuctionCtrl'
+        };
+    });
+
 })();

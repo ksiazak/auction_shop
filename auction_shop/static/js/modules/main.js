@@ -3,7 +3,7 @@
     'use strict'
 
     var main = angular.module('main', ['highcharts-ng', 'ui.bootstrap', 'angular-loading-bar', 'ngAnimate',
-                                       'atomic-notify', 'jkuri.gallery'])
+                                       'atomic-notify', 'jkuri.gallery', 'summernote'])
                       .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
                         cfpLoadingBarProvider.latencyThreshold = 10;
                       }])
@@ -11,10 +11,10 @@
                           atomicNotifyProvider.setDefaultDelay(5000);
                           atomicNotifyProvider.useIconOnNotification(true);
                       }])
-                      .config(function($interpolateProvider) {
-                          $interpolateProvider.startSymbol('{$');
-                          $interpolateProvider.endSymbol('$}');
-                      })
+//                      .config(function($interpolateProvider) {
+//                          $interpolateProvider.startSymbol('{$');
+//                          $interpolateProvider.endSymbol('$}');
+//                      })
                       .config(['$httpProvider', function($httpProvider) {
                           $httpProvider.defaults.xsrfCookieName = 'csrftoken';
                           $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';

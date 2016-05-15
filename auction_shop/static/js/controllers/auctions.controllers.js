@@ -84,17 +84,116 @@
                     .then(function(response) {
                         self.auction.if_finished = true;
                         self.auction.show_details = false;
-                        swal(self.auction.item.name, "Item has been bought.", "success");
+                        swal(self.auction.item.name, "Przedmiot został kupiony.", "success");
                     },
                     function(response) {
-                        swal(self.auction.item.name, "There were problems.", "error");
+                        swal(self.auction.item.name, "Wystąpiły problemy.", "error");
                     });
                 } else {
-                    swal(self.auction.item.name, "Cancelled.", "error");
+                    swal(self.auction.item.name, "Anulowano.", "error");
                 }
             });
-
         }
+    }]);
+
+    angular.module('main')
+    .controller('newAuctionCtrl',
+        ['$scope', '$http', 'apiService',
+        function($scope, $http, apiService) {
+        var self = this;
+        self.newAuctionData = {
+            'item': {
+                        'name': '',
+                        'state': '',
+                        'category': '',
+                        'categoryFeatures': '',
+                        'desription': '',
+                        'image': ''
+
+
+                    },
+            'auction': {
+                        'type': '',
+
+            }
+        };
+
+        apiService.getData('/api/categories/').then(function(response){
+            self.categories = response.data.results;
+        });
+
+        apiService.getData('/api/states/').then(function(response){
+            self.states = response.data.results;
+        });
+
+        apiService.getData('/api/auction_types/').then(function(response){
+            self.types = response.data.results;
+        });
+
+        $scope.today = function() {
+            $scope.dt = new Date();
+          };
+          $scope.today();
+
+          $scope.clear = function() {
+            $scope.dt = null;
+          };
+
+          $scope.options = {
+            customClass: getDayClass,
+            minDate: new Date(),
+            showWeeks: true
+          };
+
+          // Disable weekend selection
+          function disabled(data) {
+            var date = data.date,
+              mode = data.mode;
+            return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+          }
+
+          $scope.toggleMin = function() {
+            $scope.options.minDate = $scope.options.minDate ? null : new Date();
+          };
+
+          $scope.toggleMin();
+
+          $scope.setDate = function(year, month, day) {
+            $scope.dt = new Date(year, month, day);
+          };
+
+          var tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          var afterTomorrow = new Date(tomorrow);
+          afterTomorrow.setDate(tomorrow.getDate() + 1);
+          $scope.events = [
+            {
+              date: tomorrow,
+              status: 'full'
+            },
+            {
+              date: afterTomorrow,
+              status: 'partially'
+            }
+          ];
+
+          function getDayClass(data) {
+            var date = data.date,
+              mode = data.mode;
+            if (mode === 'day') {
+              var dayToCheck = new Date(date).setHours(0,0,0,0);
+
+              for (var i = 0; i < $scope.events.length; i++) {
+                var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+
+                if (dayToCheck === currentDay) {
+                  return $scope.events[i].status;
+                }
+              }
+            }
+
+            return '';
+          }
 
 
     }]);

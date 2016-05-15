@@ -1,10 +1,27 @@
 from rest_framework import serializers
-from main.models import Aukcja, ProfilUzytkownika, WartoscCechyPrzedmiotu
+from main.models import Aukcja, ProfilUzytkownika, WartoscCechyPrzedmiotu, Gatunek, StanNowosci, TypAukcji
 from collections import OrderedDict
 
 
-class AukcjaSerializer(serializers.ModelSerializer):
+def get_categories_tree_in_dict(category):
+    categories = OrderedDict()
+    current_category = category
+    while True:
+        categories[current_category.nazwa] = {}
+        features_from_category = current_category.cechy.all()
+        for feature in features_from_category:
+            try:
+                item_feature = WartoscCechyPrzedmiotu.objects.get(przedmiot=obj.przedmiot, cecha=feature)
+                categories[current_category.nazwa][feature.nazwa] = item_feature.wartosc
+            except Exception:
+                categories[current_category.nazwa][feature.nazwa] = ""
+        if current_category.gatunek_rodzic:
+            current_category = current_category.gatunek_rodzic
+        else:
+            return categories
 
+
+class AukcjaSerializer(serializers.ModelSerializer):
     item = serializers.SerializerMethodField()
     seller = serializers.SerializerMethodField()
     price = serializers.DecimalField(source='cena_minimalna', max_digits=10, decimal_places=2, read_only=True)
@@ -36,7 +53,6 @@ class AukcjaSerializer(serializers.ModelSerializer):
             'state': obj.przedmiot.stan_nowosci.wartosc,
             'categories': self.get_categories(obj),
             'image_url': obj.przedmiot.zdjecie.url
-
 
         }
         return item
@@ -89,27 +105,45 @@ class AukcjaSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_categories(obj):
-        categories = OrderedDict()
-        current_category = obj.przedmiot.gatunek
-        while True:
-            categories[current_category.nazwa] = {}
-            features_from_category = current_category.cechy.all()
-            for feature in features_from_category:
-                try:
-                    item_feature = WartoscCechyPrzedmiotu.objects.get(przedmiot=obj.przedmiot, cecha=feature)
-                    categories[current_category.nazwa][feature.nazwa] = item_feature.wartosc
-                except Exception:
-                    categories[current_category.nazwa][feature.nazwa] = ""
-            if current_category.gatunek_rodzic:
-                current_category = current_category.gatunek_rodzic
-            else:
-                return categories
-
-    # @staticmethod
-    # def get_features(obj):
+        return get_categories_tree_in_dict(obj.przedmiot.gatunek)
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='nazwa')
+    category_tree = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Gatunek
+        fields = ('name',
+                  'category_tree'
+                  )
+
+    @staticmethod
+    def get_category_tree(obj):
+        return get_categories_tree_in_dict(obj)
 
 
+class StateSerializer(serializers.ModelSerializer):
+    value = serializers.SerializerMethodField()
+
+    class Meta:
+        model = StanNowosci
+        fields = ('value',
+                 )
+
+    @staticmethod
+    def get_value(obj):
+        return obj.wartosc
 
 
+class AuctionTypeSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TypAukcji
+        fields = ('name',
+                 )
+
+    @staticmethod
+    def get_name(obj):
+        return obj.nazwa

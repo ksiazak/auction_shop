@@ -1,5 +1,5 @@
-from main.models import Aukcja
-from api.auctions.serializers import AukcjaSerializer
+from main.models import Aukcja, Gatunek, StanNowosci, TypAukcji
+from api.auctions.serializers import AukcjaSerializer, CategorySerializer, StateSerializer, AuctionTypeSerializer
 from rest_framework import viewsets
 from rest_framework import filters
 import django_filters
@@ -21,3 +21,21 @@ class AukcjaViewSet(viewsets.ModelViewSet):
     queryset = Aukcja.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = AuctionFilter
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+
+    serializer_class = CategorySerializer
+    queryset = Gatunek.objects.all()
+
+
+class StateViewSet(viewsets.ModelViewSet):
+
+    serializer_class = StateSerializer
+    queryset = StanNowosci.objects.all()
+
+
+class AuctionTypeViewSet(viewsets.ModelViewSet):
+
+    serializer_class = AuctionTypeSerializer
+    queryset = TypAukcji.objects.all()
