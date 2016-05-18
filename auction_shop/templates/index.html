@@ -37,17 +37,17 @@
                 <ul class="nav" id="side-menu">
                     {% for category, value in categories.items %}
                     <li>
-                        <a href="#"><i class="fa fa-angle-double-down fa-fw">&nbsp;</i><span onclick="window.location.replace('/?przedmiot__gatunek__nazwa={{ category }}')">{{ category }}</span><span class="fa arrow"></span></a>
+                        <a href="#"><i class="fa fa-angle-double-down fa-fw">&nbsp;</i><span onclick="window.location.replace('/?category_items={{ category }}')">{{ category }}</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             {% for subcategory, subvalue in value.items %}
                             <li>
-                                <a href="/?przedmiot__gatunek__nazwa={{ subcategory }}"><i class="fa fa-angle-double-down fa-fw">&nbsp;</i>{{ subcategory }}
+                                <a href="/?category_items={{ subcategory }}"><i class="fa fa-angle-double-down fa-fw">&nbsp;</i><span onclick="window.location.replace('/?category_items={{ subcategory }}')">{{ subcategory }}
                                     <span class="fa arrow"></span>
                                 </a>
                                 <ul class="nav nav-third-level">
                                     {% for subsubvalue in subvalue %}
                                     <li>
-                                        <a href="/?przedmiot__gatunek__nazwa={{ subsubvalue }}"><i class="fa fa-angle-double-right fa-fw">&nbsp;</i>{{ subsubvalue }}
+                                        <a href="/?category_items={{ subsubvalue }}"><i class="fa fa-angle-double-right fa-fw">&nbsp;</i>{{ subsubvalue }}
                                         </a>
                                     </li>
                                     {% endfor %}
@@ -63,28 +63,7 @@
     </nav>
     <div id="page-wrapper" ng-app="main">
         <main-page path="{{current_path}}"></main-page>
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title" id="myModalLabel">
-                            <span class="fa fa-gavel">&nbsp;</span>
-                            Dodaj nową aukcję
-                        </h4>
-                    </div>
-                    <div class="modal-body">
-                        <new-auction></new-auction>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary">Create auction</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <new-auction></new-auction>
     </div>
 </div>
 

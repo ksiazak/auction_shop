@@ -3,7 +3,7 @@
     'use strict'
 
     var main = angular.module('main', ['highcharts-ng', 'ui.bootstrap', 'angular-loading-bar', 'ngAnimate',
-                                       'atomic-notify', 'jkuri.gallery', 'summernote'])
+                                       'atomic-notify', 'jkuri.gallery', 'summernote', 'ngSanitize'])
                       .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
                         cfpLoadingBarProvider.latencyThreshold = 10;
                       }])

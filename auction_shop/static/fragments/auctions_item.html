@@ -21,7 +21,7 @@
                         <div ng-repeat="(category, features) in auctionsItemCtrl.item.categories">
                             <strong>{{ category }}</strong>:
                             <div ng-repeat="(feature, value) in features">
-                            {{ feature }}: {{ value }}<br>
+                            <strong>{{ feature }}:</strong> {{ value }}<br>
                             </div>
                             <hr>
                         </div>
@@ -40,8 +40,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-footer" style="background: white;">
-                        {{ auctionsItemCtrl.auction.item.description }}
+                    <div class="panel-footer" style="background: white;" >
+                        <p ng-bind-html="auctionsItemCtrl.description" compile-template></p>
                     </div>
                 </div>
             </div>

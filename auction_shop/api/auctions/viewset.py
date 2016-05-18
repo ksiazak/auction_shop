@@ -5,14 +5,28 @@ from rest_framework import filters
 import django_filters
 
 
+def get_category_tree(category_name):
+    category_list = []
+    category = Gatunek.objects.get(nazwa=category_name)
+    category_list.append(category.nazwa)
+    subcategories = Gatunek.objects.filter(gatunek_rodzic=category)
+    for subcategory in subcategories:
+        category_list.append(subcategory.nazwa)
+        subsubcategories = Gatunek.objects.filter(gatunek_rodzic=subcategory)
+        for subsubcategory in subsubcategories:
+            category_list.append(subsubcategory.nazwa)
+    return category_list
+
+
 class AuctionFilter(filters.FilterSet):
-    # min_price = django_filters.NumberFilter(name="priorytet", lookup_type='gte')
-    # max_price = django_filters.NumberFilter(name="priorytet", lookup_type='lte')
+    category_items = django_filters.MethodFilter(action='filter_category_items')
 
     class Meta:
         model = Aukcja
-        fields = ['id', 'priorytet', 'przedmiot__nazwa', 'przedmiot__gatunek__nazwa']
-        # fields = ['id', 'priorytet', 'min_price', 'max_price', 'przedmiot__nazwa', 'przedmiot__gatunek__nazwa']
+        fields = ['id', 'priorytet', 'przedmiot__nazwa', 'przedmiot__gatunek__nazwa', 'category_items']
+
+    def filter_category_items(self, queryset, value):
+        return queryset.filter(przedmiot__gatunek__nazwa__in=get_category_tree(value))
 
 
 class AukcjaViewSet(viewsets.ModelViewSet):

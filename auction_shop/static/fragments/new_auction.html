@@ -1,110 +1,127 @@
-<form role="form">
-    <div class="row">
-        <div class="col-md-7">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <strong>Parametry przedmiotu</strong>
-                </div>
-                <div class="panel-body">
-                    <div class="form-group well">
-                        <label>Nazwa</label>
-                        <input class="form-control" ng-model="newAuctionCtrl.item.name">
-                    </div>
-                    <div class="well">
-                        <label>Stan nowości</label><br>
-                        <div class="form form-inline" data-ng-repeat="state in newAuctionCtrl.states">
-                            <label>
-                                <input type="radio" data-ng-model="newAuctionCtrl.item.state" data-ng-value="state.value" />
-                                {{ state.value }}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="well">
-                        <div class="form-group">
-                            <label>Gatunek</label><br>
-                            <select class="col-md-12" id="categorySelect" ng-options="category.name for category in newAuctionCtrl.categories"
-                              ng-model="newAuctionCtrl.item.category">
-                            </select>
-                        </div>
-                        <br>
-                        <div class="form-group" ng-show="newAuctionCtrl.item.category">
-                            <div class="row">
-                                <div class="col-md-4" ng-repeat="(category, features) in newAuctionCtrl.item.category.category_tree">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <strong>{{ category }}</strong>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    <span class="fa fa-gavel">&nbsp;</span>
+                    Dodaj nową aukcję
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <strong>Parametry przedmiotu</strong>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group well well-xs">
+                                        <label>Nazwa</label>
+                                        <input class="form-control" ng-model="newAuctionCtrl.newAuctionData.item.name">
+                                    </div>
+                                    <div class="well well-xs">
+                                        <label>Stan nowości</label><br>
+                                        <div class="form form-inline" data-ng-repeat="state in newAuctionCtrl.states">
+                                            <label>
+                                                <input type="radio"
+                                                       data-ng-model="newAuctionCtrl.newAuctionData.item.state"
+                                                       data-ng-value="state.value" />
+                                                {{ state.value }}
+                                            </label>
                                         </div>
-                                        <div class="panel-body">
-                                            <div ng-repeat="(feature, value) in features">
-                                                {{ feature }}:
-                                                <input class="form-control">
+                                    </div>
+                                    <div class="well well-xs">
+                                        <div class="form-group">
+                                            <label>Gatunek</label><br>
+                                            <select class="col-md-12" id="categorySelect"
+                                                    ng-options="category.name for category in newAuctionCtrl.categories"
+                                                    ng-model="newAuctionCtrl.newAuctionData.item.category">
+                                            </select>
+                                        </div>
+                                        <br>
+                                        <div class="form-group" ng-show="newAuctionCtrl.newAuctionData.item.category">
+                                            <div class="row">
+                                                <div class="col-md-4"
+                                                     ng-repeat="(category, features) in newAuctionCtrl.newAuctionData.item.category.category_tree">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                            <strong>{{ category }}</strong>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            <div ng-repeat="(feature, featureValue) in features">
+                                                                {{ feature }}:
+                                                                <input class="form-control" ng-model="features[feature]">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Opis</label>
+                                        <summernote ng-model="newAuctionCtrl.newAuctionData.item.description"></summernote>
+                                    </div>
+                                    {{ newAuctionCtrl.newAuctionData.item.imageSource }}
+                                    <div class="form-group">
+                                        <label>Dodaj zdjęcie</label>
+                                        <input type="file" ng-model="newAuctionCtrl.newAuctionData.item.imageSource">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="panel panel-warning">
+                                <div class="panel-heading">
+                                    <strong>Parametry aukcji</strong>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="well well-xs">
+                                        <label>Typ aukcji</label><br>
+                                        <div class="form form-inline" data-ng-repeat="type in newAuctionCtrl.types">
+                                            <label>
+                                                <input type="radio"
+                                                       data-ng-model="newAuctionCtrl.newAuctionData.auction.type"
+                                                       data-ng-value="type.name" />
+                                                {{ type.name }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="well well-xs">
+                                        <label>Minimum price</label>
+                                        <input class="form-control"
+                                               ng-model="newAuctionCtrl.newAuctionData.auction.minPrice">
+                                    </div>
+                                    <div class="well well-xs">
+                                        <label>Data zakończenia aukcji</label>
+                                        <div style="display:inline-block; min-height:290px;">
+                                            <uib-datepicker ng-model="newAuctionCtrl.newAuctionData.auction.finishDate"
+                                                            datepicker-options="newAuctionCtrl.datepickerService.options">
+                                            </uib-datepicker>
+                                            <button class="btn btn-primary btn-outline col-md-12"
+                                                ng-show="newAuctionCtrl.newAuctionData.auction.finishDate">
+                                                {{newAuctionCtrl.newAuctionData.auction.finishDate | date:'fullDate' }}
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Opis</label>
-                        <summernote></summernote>
-                    </div>
-                    {{ newAuctionCtrl.imageSource }}
-                    <div class="form-group">
-                        <label>Dodaj zdjęcie</label>
-                        <input type="file" ng-model="newAuctionCtrl.imageSource">
-                    </div>
-                </div>
+                </form>
             </div>
-        </div>
-        <div class="col-md-5">
-            <div class="panel panel-warning">
-                <div class="panel-heading">
-                    <strong>Parametry aukcji</strong>
-                </div>
-                <div class="panel-body">
-                    <div class="well">
-                        <label>Typ aukcji</label><br>
-                        <div class="form form-inline" data-ng-repeat="type in newAuctionCtrl.types">
-                            <label>
-                                <input type="radio" data-ng-model="newAuctionCtrl.auction.type" data-ng-value="type.name" />
-                                {{ type.name }}
-                            </label>
-                        </div>
-                    </div>
-
-
-
-
-                    <pre>Selected date is: <em>{{dt | date:'fullDate' }}</em></pre>
-                    <h4>Inline</h4>
-                    <div style="display:inline-block; min-height:290px;">
-                      <uib-datepicker ng-model="dt" class="well well-sm" datepicker-options="options"></uib-datepicker>
-                    </div>
-
-                    <hr />
-                    <button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>
-                    <button type="button" class="btn btn-sm btn-default" ng-click="setDate(2009, 7, 24)">2009-08-24</button>
-                    <button type="button" class="btn btn-sm btn-danger" ng-click="clear()">Clear</button>
-                    <button type="button" class="btn btn-sm btn-default" ng-click="toggleMin()" uib-tooltip="After today restriction">Min date</button>
-
-
-
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                <button type="button" class="btn btn-primary"
+                        ng-click="newAuctionCtrl.createNewAuction()">Stwórz aukcję</button>
             </div>
         </div>
     </div>
-</form>
+</div>
 
-przedmiot:
-nazwa
-gatunek
-opis
-zdjecie
-stan_nowosci
-cechy - po wyborze gatunku
 
-aukcja:
-typ_aukcji
-cena_minimalna
-czas trwania
+

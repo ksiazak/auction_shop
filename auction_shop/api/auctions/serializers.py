@@ -3,7 +3,7 @@ from main.models import Aukcja, ProfilUzytkownika, WartoscCechyPrzedmiotu, Gatun
 from collections import OrderedDict
 
 
-def get_categories_tree_in_dict(category):
+def get_categories_tree_in_dict(item, category):
     categories = OrderedDict()
     current_category = category
     while True:
@@ -11,7 +11,7 @@ def get_categories_tree_in_dict(category):
         features_from_category = current_category.cechy.all()
         for feature in features_from_category:
             try:
-                item_feature = WartoscCechyPrzedmiotu.objects.get(przedmiot=obj.przedmiot, cecha=feature)
+                item_feature = WartoscCechyPrzedmiotu.objects.get(przedmiot=item, cecha=feature)
                 categories[current_category.nazwa][feature.nazwa] = item_feature.wartosc
             except Exception:
                 categories[current_category.nazwa][feature.nazwa] = ""
@@ -52,7 +52,7 @@ class AukcjaSerializer(serializers.ModelSerializer):
             'description': obj.przedmiot.opis,
             'state': obj.przedmiot.stan_nowosci.wartosc,
             'categories': self.get_categories(obj),
-            'image_url': obj.przedmiot.zdjecie.url
+            'image_url': obj.przedmiot.zdjecie
 
         }
         return item
@@ -105,7 +105,7 @@ class AukcjaSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_categories(obj):
-        return get_categories_tree_in_dict(obj.przedmiot.gatunek)
+        return get_categories_tree_in_dict(obj.przedmiot, obj.przedmiot.gatunek)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -120,7 +120,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_category_tree(obj):
-        return get_categories_tree_in_dict(obj)
+        return get_categories_tree_in_dict(None, obj)
 
 
 class StateSerializer(serializers.ModelSerializer):

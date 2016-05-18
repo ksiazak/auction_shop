@@ -38,12 +38,13 @@
     }]);
 
     angular.module('main')
-    .controller('auctionsItemCtrl', ['$scope',
-        function($scope) {
+    .controller('auctionsItemCtrl', ['$scope', '$sce',
+        function($scope, $sce) {
 
         var self = this;
         self.auction = $scope.auction;
         self.item = self.auction.item;
+        self.description = $sce.trustAsHtml(self.auction.item.description);
         self.images = [
             {thumb: self.item.image_url, img: self.item.image_url, description: self.item.name},
         ];
@@ -98,25 +99,24 @@
 
     angular.module('main')
     .controller('newAuctionCtrl',
-        ['$scope', '$http', 'apiService',
-        function($scope, $http, apiService) {
+        ['$scope', '$http', 'apiService', 'datepickerService',
+        function($scope, $http, apiService, datepickerService) {
         var self = this;
         self.newAuctionData = {
             'item': {
                         'name': '',
                         'state': '',
                         'category': '',
-                        'categoryFeatures': '',
-                        'desription': '',
-                        'image': ''
-
-
+                        'description': '',
+                        'imageSource': ''
                     },
             'auction': {
                         'type': '',
-
+                        'minPrice': '',
+                        'finishDate': ''
             }
         };
+        self.newAuctionData.auction.finishDate = datepickerService.date;
 
         apiService.getData('/api/categories/').then(function(response){
             self.categories = response.data.results;
@@ -130,70 +130,44 @@
             self.types = response.data.results;
         });
 
-        $scope.today = function() {
-            $scope.dt = new Date();
-          };
-          $scope.today();
-
-          $scope.clear = function() {
-            $scope.dt = null;
-          };
-
-          $scope.options = {
-            customClass: getDayClass,
-            minDate: new Date(),
-            showWeeks: true
-          };
-
-          // Disable weekend selection
-          function disabled(data) {
-            var date = data.date,
-              mode = data.mode;
-            return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-          }
-
-          $scope.toggleMin = function() {
-            $scope.options.minDate = $scope.options.minDate ? null : new Date();
-          };
-
-          $scope.toggleMin();
-
-          $scope.setDate = function(year, month, day) {
-            $scope.dt = new Date(year, month, day);
-          };
-
-          var tomorrow = new Date();
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          var afterTomorrow = new Date(tomorrow);
-          afterTomorrow.setDate(tomorrow.getDate() + 1);
-          $scope.events = [
-            {
-              date: tomorrow,
-              status: 'full'
+        self.createNewAuction = function(){
+            console.log(self.newAuctionData);
+            swal({
+                title: self.newAuctionData.item.name,
+                text: "Stworzyć aukcję z tym przedmiotem?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: false
             },
-            {
-              date: afterTomorrow,
-              status: 'partially'
-            }
-          ];
-
-          function getDayClass(data) {
-            var date = data.date,
-              mode = data.mode;
-            if (mode === 'day') {
-              var dayToCheck = new Date(date).setHours(0,0,0,0);
-
-              for (var i = 0; i < $scope.events.length; i++) {
-                var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
-
-                if (dayToCheck === currentDay) {
-                  return $scope.events[i].status;
+            function(isConfirm){
+                if (isConfirm) {
+                    $http({
+                        url: 'create_auction/',
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: {
+                            'newAuction': self.newAuctionData
+                        }
+                    })
+                    .then(function(response) {
+                        swal(self.newAuctionData.item.name, "Stworzono aukcję.", "success");
+                    },
+                    function(response) {
+                        swal(self.newAuctionData.item.name, "Wystąpiły problemy.", "error");
+                    });
+                } else {
+                    swal(self.newAuctionData.item.name, "Anulowano.", "error");
                 }
-              }
-            }
+            });
+        };
 
-            return '';
-          }
+        datepickerService.toggleMin();
 
 
     }]);

@@ -75,7 +75,7 @@ class Przedmiot(models.Model):
     nazwa = models.CharField(max_length=32)
     gatunek = models.ForeignKey(Gatunek)
     opis = models.CharField(max_length=1000, null=True, blank=True)
-    zdjecie = models.ImageField(upload_to='static/images/')
+    zdjecie = models.URLField(max_length=400)
     stan_nowosci = models.ForeignKey(StanNowosci)
     cechy = models.ManyToManyField(Cecha, through='WartoscCechyPrzedmiotu', through_fields=('przedmiot', 'cecha'),)
 

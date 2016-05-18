@@ -1,12 +1,14 @@
 import json
 
 from django.shortcuts import render
+from django.utils import timezone
+from dateutil import parser
 from django.shortcuts import render_to_response, redirect, HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.template import RequestContext
 from django.views.generic import TemplateView, View
-from .models import Gatunek, Aukcja
+from .models import Gatunek, Aukcja, Przedmiot, StanNowosci, WartoscCechyPrzedmiotu, Cecha, TypAukcji
 
 
 class IndexView(TemplateView):
@@ -40,6 +42,37 @@ class BuyItemView(View):
         auction.kupujacy = user
         auction.czy_zakonczona = True
         auction.save()
+        return HttpResponse('ok')
+
+
+class CreateAuctionView(View):
+    template_url = 'create_auction/'
+
+    def post(self, request):
+        data = json.loads(request.body.decode('utf-8'))
+        item = data['newAuction']['item']
+        auction = data['newAuction']['auction']
+        print(item)
+        print(auction)
+        # try:
+        item_object = Przedmiot(nazwa=item['name'], gatunek=Gatunek.objects.get(nazwa=item['category']['name']),
+                         opis=item['description'], zdjecie='static/images/lenovo.jpg',
+                         stan_nowosci=StanNowosci.objects.get(wartosc=item['state']),
+                        )
+        item_object.save()
+        features_data = item['category']['category_tree']
+        for category, features in features_data.items():
+            for feature, value in features.items():
+                value_of_feature = WartoscCechyPrzedmiotu(przedmiot=item_object,
+                                                          cecha=Cecha.objects.get(nazwa=feature), wartosc=value)
+                value_of_feature.save()
+        auction = Aukcja(przedmiot=item_object, sprzedawca=User.objects.get(username=request.user.username),
+                         cena_minimalna=auction['minPrice'],
+                         czas_trwania=(parser.parse(auction['finishDate']) - timezone.now()), czy_zakonczona=False,
+                         typ_aukcji=TypAukcji.objects.get(nazwa=auction['type']))
+        auction.save()
+        # except Exception as e:
+        #     print(e)
         return HttpResponse('ok')
 
 
