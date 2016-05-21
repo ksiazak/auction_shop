@@ -19,7 +19,7 @@
                     </div>
                     <div class="panel-footer" style="background: white;">
                         <div ng-repeat="(category, features) in auctionsItemCtrl.item.categories">
-                            <strong>{{ category }}</strong>:
+                            <h4>{{ category }}</h4>
                             <div ng-repeat="(feature, value) in features">
                             <strong>{{ feature }}:</strong> {{ value }}<br>
                             </div>

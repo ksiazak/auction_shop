@@ -24,6 +24,7 @@ def get_categories_tree_in_dict(item, category):
 class AukcjaSerializer(serializers.ModelSerializer):
     item = serializers.SerializerMethodField()
     seller = serializers.SerializerMethodField()
+    buyer = serializers.SerializerMethodField()
     price = serializers.DecimalField(source='cena_minimalna', max_digits=10, decimal_places=2, read_only=True)
     start_date = serializers.DateTimeField(source='data_rozpoczecia', read_only=True)
     finish_date = serializers.SerializerMethodField()
@@ -37,6 +38,7 @@ class AukcjaSerializer(serializers.ModelSerializer):
         fields = ('id',
                   'item',
                   'seller',
+                  'buyer',
                   'price',
                   'start_date',
                   'finish_date',
@@ -52,17 +54,25 @@ class AukcjaSerializer(serializers.ModelSerializer):
             'description': obj.przedmiot.opis,
             'state': obj.przedmiot.stan_nowosci.wartosc,
             'categories': self.get_categories(obj),
-            'image_url': obj.przedmiot.zdjecie
+            'image_url': obj.przedmiot.zdjecie,
 
         }
         return item
 
-    @staticmethod
-    def get_seller(obj):
+    def get_seller(self, obj):
+        return self.get_user(obj.sprzedawca)
+
+    def get_buyer(self, obj):
+        if obj.kupujacy:
+            return self.get_user(obj.kupujacy)
+        else:
+            return {}
+
+    def get_user(self, user):
         try:
-            profile = ProfilUzytkownika.objects.get(uzytkownik=obj.sprzedawca)
-            seller = {
-                'username': obj.sprzedawca.username,
+            profile = ProfilUzytkownika.objects.get(uzytkownik=user)
+            user_info = {
+                'username': user.username,
                 'type': profile.typ.wartosc,
                 'email': profile.email,
                 'name': profile.imie,
@@ -72,10 +82,10 @@ class AukcjaSerializer(serializers.ModelSerializer):
                 'house_number': profile.numer_domu
             }
         except Exception:
-            seller = {
-                'username': obj.sprzedawca.username,
+            user_info = {
+                'username': user.username,
             }
-        return seller
+        return user_info
 
     @staticmethod
     def get_finish_date(obj):
@@ -86,7 +96,7 @@ class AukcjaSerializer(serializers.ModelSerializer):
         type = {
             'name': obj.typ_aukcji.nazwa,
             'color': color,
-            'action': action
+            'action': action,
         }
         return type
 

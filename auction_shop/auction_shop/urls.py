@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import url, include
-from main.views import IndexView, BuyItemView, CreateAuctionView, login_user, logout_user
+from main.views import IndexView, BuyItemView, CreateAuctionView, ReportsView, login_user, logout_user, AuctionsTypesNumberView
 from api.routers import router
 
 
@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'^api/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^buy_item/$', BuyItemView.as_view(), name='buy_item'),
     url(r'^create_auction/$', CreateAuctionView.as_view(), name='create_auction'),
+    url(r'^reports/$', ReportsView.as_view(), name='reports'),
+    url(r'^auction_types_number/$', AuctionsTypesNumberView.as_view(), name='auction_types_number'),
     url(r'^', IndexView.as_view(template_name="index.html"), name='index'),
 
 ]

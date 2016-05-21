@@ -4,36 +4,53 @@
 
     angular.module('main')
     .controller('auctionsListCtrl',
-        ['$scope', '$location', 'apiService', 'notificationService',
-        function($scope, $location, apiService, notificationService) {
+        ['$scope', '$window', 'apiService', 'notificationService',
+        function($scope, $window, apiService, notificationService) {
 
         var self = this;
         self.isLoading = true;
         self.auctions = [];
         self.filterUrl = $scope.path
-
-//        self.bigCurrentPage = 1;
-//        self.currentPage = 1;
-//        self.maxSize = 5;
+        self.showFilters = false;
+        self.orderingField = "";
+        self.orderingType = "";
+        self.orderingTypes = ['rosnąco', 'malejąco'];
+        self.filteringField = "";
+        self.filteringType = "";
+        self.filteringTypes = ['równy', 'zawiera'];
+        self.filteringValue = "";
 
         apiService.getData('/api/aukcje' + self.filterUrl).then(function(response){
             self.auctions = response.data.results;
+            self.ordering = response.data.ordering;
+            self.filters = response.data.filters;
             self.bigTotalItems = response.data.count;
             self.currentPage = response.data.next;
             self.isLoading = false;
         });
 
-//        $scope.$watch('auctionsListCtrl.bigCurrentPage', function(){
-//            if (self.currentPage != self.bigCurrentPage){
-//                var currentUrl = window.location.href;
-//                var pagePos = currentUrl.search('page=');
-//                currentUrl[pagePos]
-//
-//                window.location.replace(window.location.href);
-//            }
-//        })
-
-
+        self.executeFilteringOrdering = function(){
+            var redirectUrl = '/?';
+            if (self.orderingField){
+                redirectUrl += 'ordering=';
+                if (self.orderingType == 'malejąco'){
+                    redirectUrl += '-';
+                }
+                redirectUrl += self.orderingField;
+            }
+            if (self.filteringField){
+                if (self.orderingField){
+                    redirectUrl += '&';
+                }
+                if (self.filteringType == 'równy'){
+                    redirectUrl += self.filteringField + '=' + self.filteringValue;
+                }
+                else if (self.filteringType == 'zawiera'){
+                    redirectUrl += self.filteringField + '_contains=' + self.filteringValue;
+                }
+            }
+            $window.location.href = redirectUrl;
+        };
 
     }]);
 
@@ -85,6 +102,7 @@
                     .then(function(response) {
                         self.auction.if_finished = true;
                         self.auction.show_details = false;
+                        self.auction.buyer.username = response.data.buyer;
                         swal(self.auction.item.name, "Przedmiot został kupiony.", "success");
                     },
                     function(response) {
