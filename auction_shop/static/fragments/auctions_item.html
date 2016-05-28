@@ -73,4 +73,14 @@
                             ng-show="auctionsItemCtrl.auction.type.name == 'Kup teraz!'">
         </auction-action-buy>
     </uib-tab>
+    <uib-tab index="2">
+        <uib-tab-heading>
+            <i class="glyphicon glyphicon-remove"></i> Usuń
+        </uib-tab-heading>
+        <br>
+        <button class="btn btn-outline btn-danger col-md-12" ng-click="auctionsItemCtrl.removeItem()">
+            <span class="glyphicon glyphicon-remove"></span>
+            Usuń przedmiot
+        </button>
+    </uib-tab>
 </uib-tabset>

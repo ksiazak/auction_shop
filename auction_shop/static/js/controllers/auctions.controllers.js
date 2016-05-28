@@ -55,8 +55,8 @@
     }]);
 
     angular.module('main')
-    .controller('auctionsItemCtrl', ['$scope', '$sce',
-        function($scope, $sce) {
+    .controller('auctionsItemCtrl', ['$scope', '$sce', '$http',
+        function($scope, $sce, $http) {
 
         var self = this;
         self.auction = $scope.auction;
@@ -65,6 +65,45 @@
         self.images = [
             {thumb: self.item.image_url, img: self.item.image_url, description: self.item.name},
         ];
+
+        self.removeItem = function(){
+            swal({
+                title: self.auction.item.name,
+                text: "Na pewno chcesz usunąć ten przedmiot?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Tak",
+                cancelButtonText: "Nie",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+            function(isConfirm){
+                if (isConfirm) {
+                    $http({
+                        url: 'remove_item/',
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: {
+                            'auction_id': self.auction.id
+                        }
+                    })
+                    .then(function(response) {
+                        self.auction.if_finished = true;
+                        self.auction.show_details = false;
+                        self.auction.buyer.username = "Usunięto.";
+                        swal(self.auction.item.name, "Przedmiot został usuniety.", "success");
+                    },
+                    function(response) {
+                        swal(self.auction.item.name, "Wystąpiły problemy.", "error");
+                    });
+                } else {
+                    swal(self.auction.item.name, "Anulowano.", "error");
+                }
+            });
+        }
 
     }]);
 

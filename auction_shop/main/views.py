@@ -1,4 +1,5 @@
 import json
+from collections import OrderedDict
 
 from django.shortcuts import render
 from django.utils import timezone
@@ -9,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.template import RequestContext
 from django.views.generic import TemplateView, View
+from django.db.models import Avg
 from .models import Gatunek, Aukcja, Przedmiot, StanNowosci, WartoscCechyPrzedmiotu, Cecha, TypAukcji
 
 
@@ -45,6 +47,16 @@ class BuyItemView(View):
         auction.czy_zakonczona = True
         auction.save()
         return JsonResponse({'buyer': user.username})
+
+
+class RemoveItemView(View):
+    template_url = 'remove_item/'
+
+    def post(self, request):
+        data = json.loads(request.body.decode('utf-8'))
+        auction = Aukcja.objects.get(id=data['auction_id'])
+        auction.delete()
+        return JsonResponse({})
 
 
 class CreateAuctionView(View):
@@ -85,10 +97,43 @@ class AuctionsTypesNumberView(View):
 
     def get(self, request):
         types_with_quantity = {}
-        types = TypAukcji.objects.all()
+        types = TypAukcji.objects.all().order_by('nazwa')
         for type in types:
             types_with_quantity[type.nazwa] = len(Aukcja.objects.filter(typ_aukcji=type))
         return JsonResponse(types_with_quantity)
+
+
+class ItemsSaldoPerUserView(View):
+    template_url = 'items_saldo_per_user/'
+
+    def get(self, request):
+        bought_and_sold_items = {}
+        users = User.objects.all().order_by('username')
+        for user in users:
+            bought_and_sold_items[user.username] = (len(Aukcja.objects.filter(sprzedawca=user)),
+                                                    len(Aukcja.objects.filter(kupujacy=user)))
+        return JsonResponse(bought_and_sold_items)
+
+class ItemsPriceInTimeView(View):
+    template_url = 'items_price_in_time/'
+
+    def get(self, request):
+        now = timezone.now()
+        incremented_date = timezone.now() - timezone.timedelta(days=30)
+        items_price_in_time = OrderedDict()
+        users = User.objects.all().order_by('username')
+        while incremented_date < now:
+            incremented_date_in_str = str(incremented_date.strftime('%b %d'))
+            items_price_in_time[incremented_date_in_str] = {}
+            for user in users:
+                auctions_on_this_day = Aukcja.objects.filter(sprzedawca=user,
+                                                             data_rozpoczecia__year=incremented_date.year,
+                                                             data_rozpoczecia__month=incremented_date.month,
+                                                             data_rozpoczecia__day=incremented_date.day,
+                                                             typ_aukcji=TypAukcji.objects.get(nazwa="Kup teraz!"))
+                items_price_in_time[incremented_date_in_str][user.username] = auctions_on_this_day.aggregate(Avg('cena_minimalna'))
+            incremented_date += timezone.timedelta(days=1)
+        return JsonResponse(items_price_in_time)
 
 
 def login_user(request):

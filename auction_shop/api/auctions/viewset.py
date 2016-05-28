@@ -22,6 +22,7 @@ class AuctionFilter(filters.FilterSet):
     category_items = django_filters.MethodFilter(action='filter_category_items')
     przedmiot__nazwa_contains = django_filters.MethodFilter(action='filter_przedmiot__nazwa_contains')
     typ_aukcji__nazwa_contains = django_filters.MethodFilter(action='filter_typ_aukcji__nazwa_contains')
+    przedmiot__stan_nowosci__wartosc_contains = django_filters.MethodFilter(action='filter_przedmiot__stan_nowosci__wartosc_contains')
 
     class Meta:
         model = Aukcja
@@ -30,7 +31,9 @@ class AuctionFilter(filters.FilterSet):
                   'przedmiot__nazwa',
                   'przedmiot__nazwa_contains',
                   'typ_aukcji__nazwa',
-                  'typ_aukcji__nazwa_contains'
+                  'typ_aukcji__nazwa_contains',
+                  'przedmiot__stan_nowosci__wartosc',
+                  'przedmiot__stan_nowosci__wartosc_contains',
                  ]
 
     def filter_category_items(self, queryset, value):
@@ -41,6 +44,9 @@ class AuctionFilter(filters.FilterSet):
 
     def filter_typ_aukcji__nazwa_contains(self, queryset, value):
         return queryset.filter(typ_aukcji__nazwa__contains=value)
+
+    def filter_przedmiot__stan_nowosci__wartosc_contains(self, queryset, value):
+        return queryset.filter(przedmiot__stan_nowosci__wartosc__contains=value)
 
 
 class AukcjaViewSet(viewsets.ModelViewSet):
@@ -61,6 +67,7 @@ class AukcjaViewSet(viewsets.ModelViewSet):
         response.data['filters'] = {
             'Typ aukcji': 'typ_aukcji__nazwa',
             'Nazwa przedmiotu': 'przedmiot__nazwa',
+            'Stan nowości': 'przedmiot__stan_nowosci__wartosc',
         }
         return response
 
