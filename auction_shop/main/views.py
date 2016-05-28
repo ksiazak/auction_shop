@@ -131,7 +131,8 @@ class ItemsPriceInTimeView(View):
                                                              data_rozpoczecia__month=incremented_date.month,
                                                              data_rozpoczecia__day=incremented_date.day,
                                                              typ_aukcji=TypAukcji.objects.get(nazwa="Kup teraz!"))
-                items_price_in_time[incremented_date_in_str][user.username] = auctions_on_this_day.aggregate(Avg('cena_minimalna'))
+                items_price_in_time[incremented_date_in_str][user.username] = \
+                    auctions_on_this_day.aggregate(Avg('cena_minimalna'))
             incremented_date += timezone.timedelta(days=1)
         return JsonResponse(items_price_in_time)
 

@@ -13,29 +13,29 @@
             <li>
                 <a data-toggle="modal" data-target="#myModal" style="cursor: pointer">
                     <i class="fa fa-plus-square-o">&nbsp;</i>
-                    New auction
+                    Nowa aukcja
                 </a>
             </li>
             {% endif %}
             {% if view != 'reports' %}
             <li>
-                <a href="reports/"><i class="fa fa-book fa-fw">&nbsp;</i>Reports</a>
+                <a href="reports/"><i class="fa fa-book fa-fw">&nbsp;</i>Raporty</a>
             </li>
             {% endif %}
             <li>
-                <a href="admin/"><i class="fa fa-key fa-fw">&nbsp;</i>Admin panel</a>
+                <a href="admin/"><i class="fa fa-key fa-fw">&nbsp;</i>Panel admina</a>
             </li>
             <li>
-                <a class="white-on-blue">Logged in as <strong>{{ request.user.username }}.</strong></a>
+                <a class="white-on-blue">Zalogowany jako <strong>{{ request.user.username }}.</strong></a>
             </li>
             <li>
-                <a href="logout/"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Log out</a>
+                <a href="logout/"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Wyloguj</a>
             </li>
         </ul>
         {% else %}
         <ul class="nav navbar-top-links navbar-right">
             <li>
-                <a href="login/"><span class="glyphicon glyphicon-log-in"></span>&nbsp;Log in</a>
+                <a href="login/"><span class="glyphicon glyphicon-log-in"></span>&nbsp;Zaloguj</a>
             </li>
         </ul>
         {% endif %}
